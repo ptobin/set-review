@@ -12,7 +12,7 @@
 
 
 .set-card-square {
-	height: 285px;
+	height: 255px;
 }
 
 #file-container {
@@ -49,18 +49,24 @@
   top: -8px;
 }
 
+#rateSlider {
+  position: relative;
+  top: 9px;
+}
+#rateOutput {
+  font-size: 80%;	
+  position: relative;
+  top: 7px;
+}
+
 
 #player-controls {
-  background:rgba(255,255,255,0.5);
+
   position: relative;
-  width: 175px;
-  top: -900px;
-  left: 680px;
-  border-radius: 5px;
-  z-index: 10;
-  text-align:center;
+  width: 100%;
+  z-index: 100;
+  text-align:left;
   padding: 2px;
-  border: solid 1px #eee;
 }
 
 #progress-bar {
@@ -90,11 +96,14 @@
 
 
 #current-time{
+
+  font-size: 80%;
   position: relative;
   width: 80px;
-  left: 41px;
-  z-index: 20;
-  text-align:center;
+  left: 25px;
+  top: -2px;
+  z-index: 100;
+  text-align:left;
   padding: 2px;
 
  }
@@ -105,11 +114,13 @@
 }
 
 #segment-badge {
-	position: relative;
-	left: 100px;
-	top: 2px;
+  position: relative;
+  left: 126px;
 }
 
+#yt-metadata {
+	font-size: 80%;
+}
 
 </style> 
 </head> 
@@ -147,12 +158,7 @@
       <div id="video-container" class="mdl-cell mdl-cell--8-col">
       	 <div class="mdl-shadow--2dp">
            <video id="set-video" width="100%" height="auto" >
-    		
-    		
-    		<source src="https://storage.cloud.google.com/set-videos/{{ name }}.mp4" type="video/mp4" preload>
-    		
-
-    		
+       		<source src="https://storage.cloud.google.com/set-videos/{{ name }}.mp4" type="video/mp4" preload>
     	   </video>
  
     	   <div id="progress-bar">
@@ -163,20 +169,6 @@
           
         <canvas id="segment-status-bar"></canvas>
 
-        <div id="player-controls">	
-	      <button id="prev-segment" onclick="prev()" class="mdl-button mdl-button--icon mdl-js-button carousel-button" title="Previous">
-	        <i class="material-icons carousel-button__icon">navigate_before</i>
-	      </button>
-	      <button id="carousel-btn-play-pause" class="mdl-button mdl-button--icon mdl-js-button carousel-button" title="Play">
-	        <i class="material-icons carousel-button__icon">play_circle_outline</i>
-	      </button>
-	      <button id="next-segment" onclick="seek()" class="mdl-button mdl-button--icon mdl-js-button carousel-button" title="Next">
-	        <i class="material-icons carousel-button__icon">navigate_next</i>
-	      </button>
-	       <br><input type="range" step="0.5" min="0.5" max="10" value="1" id="rateSlider">
-    	  <span id="rateOutput" aria-live="polite"></span>
-          <div id="current-time"></div>
-        </div>
     
       </div>
 
@@ -186,22 +178,56 @@
 	      <div class="set-card-square mdl-card mdl-shadow--2dp">
 	        <div class="mdl-card__title">
 				<div id="segment-title-text" class="mdl-card__title-text"></div>	
-				<span id="segment-badge" class="mdl-badge" data-badge="✘" >Reviewed</span>
+                <span id="segment-badge" class="mdl-badge" data-badge="" >reviewed</span>
 	        </div>
-	        <div id="segment-support-text" class="mdl-card__supporting-text"></div>
-		  </div><br>
-	      <div id="file-container" class="set-card-square mdl-card mdl-shadow--2dp">
-	        <div class="mdl-card__title">
-	          <div id="file-title-text" class="mdl-card__title-text">File Information</div>	 
-	        </div>
-	        <div id="file-info" class="mdl-card__supporting-text"></div>
-	        <br><br>
-	        <div id="save-updates" class="mdl-card__actions mdl-card--border">
-	    	 <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Publish to YouTube</a>
-	  	   </div>
 
-	      </div>
+	        <div id="segment-support-text" class="mdl-card__supporting-text"></div>
+
+
+		  <div id="player-controls">	
+	      <button id="prev-segment" onclick="prev()" class="mdl-button mdl-button--icon mdl-js-button carousel-button" title="Previous">
+	        <i class="material-icons carousel-button__icon">navigate_before</i>
+	      </button>
+	      <button id="carousel-btn-play-pause" class="mdl-button mdl-button--icon mdl-js-button carousel-button" title="Play">
+	        <i class="material-icons carousel-button__icon">play_circle_outline</i>
+	      </button>
+	      <button id="next-segment" onclick="seek()" class="mdl-button mdl-button--icon mdl-js-button carousel-button" title="Next">
+	        <i class="material-icons carousel-button__icon">navigate_next</i>
+	      </button>
+	      &nbsp;&nbsp;&nbsp;&nbsp;<input type="range" step="0.5" min="0.5" max="10" value="1" id="rateSlider">
+    	  <span id="rateOutput" aria-live="polite"></span>
+          <div id="current-time"></div>
+         </div>
+
 	    </div>
+	    <br>
+	    <div id="yt-metadata">
+	    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+           <input class="mdl-textfield__input" type="text" id="title">
+           <label class="mdl-textfield__label" for="title">Title...</label>
+        </div>
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+           <input class="mdl-textfield__input" type="text" id="description">
+           <label class="mdl-textfield__label" for="description">Description...</label>
+        </div>
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+           <input class="mdl-textfield__input" type="text" id="tags">
+           <label class="mdl-textfield__label" for="tags">Tags...</label>
+        </div>   
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+           <input class="mdl-textfield__input" type="text" value="WW" id="ownership">
+           <label class="mdl-textfield__label" for="ownership">Ownership...</label>
+         </div>
+         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+           <input class="mdl-textfield__input" type="text" value="Monetize in all countries" id="usage-policy">
+           <label class="mdl-textfield__label" for="usage-policy">Usage Policy...</label>
+         </div>
+         <button class="mdl-button mdl-js-button mdl-button--raised" disabled>Publish to YouTube</button>
+         
+         </div>
+         
+      </div>
+
    </div>
  
    </main>
@@ -228,10 +254,8 @@ var scenes_url= 'https://www.googleapis.com/storage/v1/b/set-videos/o/{{ name }}
 var scenes=[];
 
 google.charts.load("current", {"packages":["timeline"]});	
-$("#current-time").draggable();
-$("#player-controls").draggable();
-
-
+//$("#current-time").draggable();
+//$("#player-controls").draggable();
 
 var rateOutput = document.getElementById("rateOutput");
 var rateSlider = document.getElementById("rateSlider");
@@ -470,12 +494,11 @@ function updateSegmentInfo() {
   var end_time = new Date(0,0,0,0,0,scenes[cur][1]/1000);
   var duration = new Date(0,0,0,0,0,(scenes[cur][1]- scenes[cur][0])/1000);
   var rgb = rgbToHex(scenes[cur][2], scenes[cur][3], scenes[cur][4]);  
-  var duration_text = "<br>duration: <b>"+("00" + duration.getHours()).slice(-2)+":"+("00" + duration.getMinutes()).slice(-2)+":"+("00" + duration.getSeconds()).slice(-2)+"</b>";
-  var start_end_text = "<br><br>start-end: <b>"+ ("00" + start_time.getHours()).slice(-2)+":"+("00" + start_time.getMinutes()).slice(-2)+":"+("00" + start_time.getSeconds()).slice(-2) + " - "+("00" + end_time.getHours()).slice(-2)+":"+("00" + end_time.getMinutes()).slice(-2)+":"+("00" +end_time.getSeconds()).slice(-2)+"</b>";
-  $(".mdl-card__supporting-text").html(duration_text+start_end_text);
-  $(".mdl-card__supporting-text").append("<br><br>rgb score:<div style=\"padding:5px;display: inline;text-align:center;width:240px;color:white;background-color:"+rgb+"\">"+rgb+"</div>");
-  $(".mdl-card__supporting-text").append("<br><br>segment reviewed: " + scenes[cur].reviewed);
+  var duration_text = "duration: <b>"+("00" + duration.getHours()).slice(-2)+":"+("00" + duration.getMinutes()).slice(-2)+":"+("00" + duration.getSeconds()).slice(-2)+"</b>";
+  var start_end_text = "<br>start-end: <b>"+ ("00" + start_time.getHours()).slice(-2)+":"+("00" + start_time.getMinutes()).slice(-2)+":"+("00" + start_time.getSeconds()).slice(-2) + " - "+("00" + end_time.getHours()).slice(-2)+":"+("00" + end_time.getMinutes()).slice(-2)+":"+("00" +end_time.getSeconds()).slice(-2)+"</b>";
   
+  $(".mdl-card__supporting-text").html(duration_text+start_end_text);
+  $(".mdl-card__supporting-text").append("<br>rgb score:<div style=\"padding:5px;display: inline;text-align:center;width:240px;color:white;background-color:"+rgb+"\">"+rgb+"</div>");  
 
   var badge = document.querySelector("#segment-badge"); 
   if (scenes[cur].reviewed) {  
@@ -484,70 +507,16 @@ function updateSegmentInfo() {
        badge.setAttribute("data-badge","✘"); 	
   }
 
-  
- //updateFileInfo();
   $("#segment-support-text").css('background-color', rgb);
   $("#segment-support-text").css('color', 'white');
   
-    updatebar(vid.currentTime * ratio);
-    updateFileInfo();
- 	drawSegmentStatus();
+  updatebar(vid.currentTime * ratio);
+
+  drawSegmentStatus();
  	
  }
 
 
-
-
-$('input[type=radio]').on('change', function() {
-     switch($(this).val()) {
-         case 'keep':
-             scenes[cur].segment="keep";
-             break;
-         case 'remove':
-             scenes[cur].segment="remove";
-             break;
-         case 'exclude':
-             scenes[cur].segment="exclude";
-             break;
-
-     }
-     drawSegmentStatus();
-});
-
-function updateFileInfo() {
-	if(vid.readyState > 0) {
- 		//var minutes = parseInt(vid.duration / 60, 10);
-		//var seconds = vid.duration % 60;
-      var duration = new Date(0,0,0,0,0,vid.duration);
-      var duration_text = "<br>original duration: <b>"+("00" + duration.getHours()).slice(-2)+":"+("00" + duration.getMinutes()).slice(-2)+":"+("00" + duration.getSeconds()).slice(-2)+"</b>";
-    $("#file-info").html("<b>Filename</b>: "+"{{ name }}"+"</b><br>");
-    
-    $("#file-info").append("<br>number of segments: <b>" + scenes.length + "</b>");
-    var cut_duration = 0;
-    var segments_removed = 0;
-    var segments_excluded = 0;
-    var segments_reviewed = 0;
-    scenes.forEach(function(e) {
-    	
-      if (e.reviewed === true) {
-      	segments_reviewed += 1;
-      } 	
-      if (e.segment !== "remove") {
-        cut_duration += (e[1]- e[0])/1000;
-        if (e.segment === "exclude") {
-          segments_excluded += 1;
-        }
-      }
-      else {
-         segments_removed += 1;
-      }
-    });
-    var cut_duration_date = new Date(0,0,0,0,0,cut_duration);
-    var cur_duration_text = "<br>new duration: <b>"+("00" + cut_duration_date.getHours()).slice(-2)+":"+("00" + cut_duration_date.getMinutes()).slice(-2)+":"+("00" + cut_duration_date.getSeconds()).slice(-2)+"</b>";
-    
-    $("#file-info").append(cur_duration_text + duration_text + "<br>segments removed: <b>"+segments_removed+"</b><br>segments excluded: <b>"+segments_excluded+"</b><br>segments reviewed: <b>"+segments_reviewed+"</b>"+" of "+scenes.length);
-   }
-}
 
 $( document ).ready(function() {
     console.log( "ready!" );
@@ -595,10 +564,7 @@ $( document ).ready(function() {
 	});
 	var updatebar = function(x) {
 		var progress = $('#progress-bar');
-		
-
 		var maxduration = vid.duration;
-		//var position = x - progress.offset().left;
 		var position = x;
 		var percentage = 100 * position / progress.width();
 
