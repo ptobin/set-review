@@ -1,16 +1,71 @@
 <!DOCTYPE html> 
 <html> 
 <head>
-  <link rel="stylesheet" type="text/css" href="/static/scene.css">
-  <link rel="stylesheet" type="text/css" href="/static/style.css">
-  <!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> -->
-  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/themes/redmond/jquery-ui.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-  <script src="/static/jquery.csv.js"></script>
-  <script src="/static/segment.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-</head>
-  <body>
-  <h1>Detect (under construction)</h1>
-  </body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.indigo-pink.min.css">
+<script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script> 
+<script src="https://apis.google.com/js/client.js"></script>
+<style>
+</style> 
+</head> 
+  <main>
+  <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+      <!-- Title -->
+      <span class="mdl-layout-title">SET - Configuration</span>
+      <!-- Add spacer, to align navigation to the right -->
+      <div class="mdl-layout-spacer"></div>
+      <!-- Navigation. We hide it in small screens. -->
+      <nav class="mdl-navigation mdl-layout--large-screen-only">
+        <a class="mdl-navigation__link" href=""></a>
+        <a class="mdl-navigation__link" href=""></a>
+        <a class="mdl-navigation__link" href=""></a>
+      </nav>
+    </div>
+  </header>
+  <div class="mdl-layout__drawer">
+    <span class="mdl-layout-title">SET</span>
+    <nav class="mdl-navigation">
+          <a class="mdl-navigation__link" href="../intro">SET Intro</a>    
+          <a class="mdl-navigation__link" href="../detect">Detect Segments</a>
+      <a class="mdl-navigation__link" href="">Edit Segment</a>
+      <a class="mdl-navigation__link" href="../deliver">Deliver to YouTube</a>  
+    </nav>
+  </div> 
+  
+  <div class="mdl-grid">
+    <div class="mdl-cell mdl-cell--8-col">
+    <button id="authorize-button" style="visibility: hidden">Authorize</button>
+   	</div>
+  </div>
+ </main>
+ <script>
+/*eslint-env jquery */
+/*globals gapi */
+var PROJECT = "set-cloud";
+var CLIENT_ID = '385389552797-ejkip3mim82hcjnkddnnsvjcipel21a7.apps.googleusercontent.com';
+var API_KEY = 'AIzaSyC0MKe_l9ojojT2pN-MFeGiFpCLrL5dEwQ';
+var SCOPES = 'https://www.googleapis.com/auth/devstorage.full_control';
+var API_VERSION = 'v1';
+    
+     function authorization() {
+       gapi.client.setApiKey(API_KEY);
+       gapi.auth.authorize({
+         client_id: CLIENT_ID,
+         scope: SCOPES,
+         immediate: false
+       }, function(authResult) {
+            if (authResult && !authResult.error) {
+              window.alert('Auth was successful!');
+            } else {
+              window.alert('Auth was not successful');
+            }
+          }
+       );
+     }
+     
+ $(window).load(authorization);    
+ </script>
  </html>

@@ -54,8 +54,8 @@
   background:rgba(255,255,255,0.5);
   position: relative;
   width: 175px;
-  top: -322px;
-  left: 10px;
+  top: -900px;
+  left: 680px;
   border-radius: 5px;
   z-index: 10;
   text-align:center;
@@ -104,6 +104,13 @@
 	top: 2px;
 }
 
+#segment-badge {
+	position: relative;
+	left: 100px;
+	top: 2px;
+}
+
+
 </style> 
 </head> 
 <!-- No header, and the drawer stays open on larger screens (fixed drawer). -->
@@ -140,6 +147,8 @@
       <div id="video-container" class="mdl-cell mdl-cell--8-col">
       	 <div class="mdl-shadow--2dp">
            <video id="set-video" width="100%" height="auto" >
+    		
+    		
     		<source src="https://storage.cloud.google.com/set-videos/{{ name }}.mp4" type="video/mp4" preload>
     		
 
@@ -176,40 +185,19 @@
       
 	      <div class="set-card-square mdl-card mdl-shadow--2dp">
 	        <div class="mdl-card__title">
-
-				  <h3 id="segment-title-text" class="mdl-card__title-text"></h3>	    
+				<div id="segment-title-text" class="mdl-card__title-text"></div>	
+				<span id="segment-badge" class="mdl-badge" data-badge="✘" >Reviewed</span>
 	        </div>
 	        <div id="segment-support-text" class="mdl-card__supporting-text"></div>
-		   <div class="mdl-card__actions mdl-card--border">
-		     <div id="radios"> 
-			   <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="keep-segment">
-	      			<input type="radio" id="keep-segment" class="mdl-radio__button" name="options" value="keep" checked>
-	      			<span class="mdl-radio__label">Keep</span>
-	    	    </label>
-	    		&nbsp;&nbsp;&nbsp;&nbsp;<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="remove-segment">
-	      			<input type="radio" id="remove-segment" class="mdl-radio__button" name="options" value="remove">
-	      			<span class="mdl-radio__label">Remove</span>
-	    		</label>
-	    	    &nbsp;&nbsp;&nbsp;&nbsp;<label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="exclude-segment">
-	      			<input type="radio" id="exclude-segment" class="mdl-radio__button" name="options" value="exclude">
-	      			<span class="mdl-radio__label">Exclude</span>
-	    		</label>
-               </div>   
-	    	</div>
 		  </div><br>
 	      <div id="file-container" class="set-card-square mdl-card mdl-shadow--2dp">
 	        <div class="mdl-card__title">
 	          <div id="file-title-text" class="mdl-card__title-text">File Information</div>	 
-	          				  <!-- Number badge -->
-                  <span id="reviewed-badge" class="mdl-badge" data-badge="0">Reviewed</span>
-
-
-
 	        </div>
 	        <div id="file-info" class="mdl-card__supporting-text"></div>
 	        <br><br>
 	        <div id="save-updates" class="mdl-card__actions mdl-card--border">
-	    	 <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Save Updates</a>
+	    	 <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Publish to YouTube</a>
 	  	   </div>
 
 	      </div>
@@ -232,7 +220,9 @@ var loaded = 0;
 var nav_width = 0;
 var container_width = document.getElementById("mdl-grid").offsetWidth;
  
-var scenes_url= 'https://storage.cloud.google.com/set-videos/{{ name }}_visual_scenes.csv';
+//var scenes_url= 'https://storage.cloud.google.com/set-videos/{{ name }}_visual_scenes.csv';
+var scenes_url= 'https://www.googleapis.com/storage/v1/b/set-videos/o/{{ name }}_visual_scenes.csv?alt=media';
+
  
 //var scenes_url = "../static/{{ name }}" + "_visual_scenes.csv"; 
 var scenes=[];
@@ -241,21 +231,6 @@ google.charts.load("current", {"packages":["timeline"]});
 $("#current-time").draggable();
 $("#player-controls").draggable();
 
-vid.addEventListener('progress', function(evt) {
-    var total = vid.duration;
-    loaded = loaded + 8;
-    document.querySelector('.mdl-js-progress').addEventListener('mdl-componentupgraded', function() {
-         this.MaterialProgress.setProgress(loaded);
-         this.MaterialProgress.setBuffer(container_width-loaded);
-      });
-      if (loaded !==8) {
-        document.querySelector('.mdl-js-progress').MaterialProgress.setProgress(loaded);        
-        document.querySelector('.mdl-js-progress').MaterialProgress.setBuffer(100-loaded);
-     }
-      if (!isNaN(total)) {
-        $("#video-loading").fadeOut();
-      }
-   });
 
 
 var rateOutput = document.getElementById("rateOutput");
@@ -414,8 +389,6 @@ var i = setInterval(function() {
             success: function(data) {processData(data);}
           });
           
-         
-      
         }
 	  }
   }, 200);    
@@ -437,6 +410,7 @@ document.onkeydown = function(e) {
         case 40:
             $("#next-segment").trigger("click");
             break;
+            /*
         case 75: // the letter k
             scenes[cur].segment = "keep";
             $("#keep-segment").trigger("click");
@@ -455,7 +429,7 @@ document.onkeydown = function(e) {
             updateSegmentInfo();
 
             break;
-             
+   */          
     }
     //e.preventDefault();
 };
@@ -501,32 +475,26 @@ function updateSegmentInfo() {
   $(".mdl-card__supporting-text").html(duration_text+start_end_text);
   $(".mdl-card__supporting-text").append("<br><br>rgb score:<div style=\"padding:5px;display: inline;text-align:center;width:240px;color:white;background-color:"+rgb+"\">"+rgb+"</div>");
   $(".mdl-card__supporting-text").append("<br><br>segment reviewed: " + scenes[cur].reviewed);
+  
+
+  var badge = document.querySelector("#segment-badge"); 
+  if (scenes[cur].reviewed) {  
+      badge.setAttribute("data-badge","✓");
+  } else {
+       badge.setAttribute("data-badge","✘"); 	
+  }
+
+  
  //updateFileInfo();
   $("#segment-support-text").css('background-color', rgb);
   $("#segment-support-text").css('color', 'white');
   
-  scenes[cur].reviewed=true;
-  
-
-  if (scenes[cur].segment === "keep") {
-  	$("#keep-segment").trigger("click");
-  }
-  if (scenes[cur].segment === "remove") {
-    $("#remove-segment").trigger("click");
-  }
-  if (scenes[cur].segment === "exclude") {
-      $("#exclude-segment").trigger("click");
-  }
-
     updatebar(vid.currentTime * ratio);
     updateFileInfo();
  	drawSegmentStatus();
  	
  }
 
-$('.mdl-button').click(function(){
-	alert();
-});
 
 
 
@@ -573,12 +541,9 @@ function updateFileInfo() {
       else {
          segments_removed += 1;
       }
-    })
+    });
     var cut_duration_date = new Date(0,0,0,0,0,cut_duration);
     var cur_duration_text = "<br>new duration: <b>"+("00" + cut_duration_date.getHours()).slice(-2)+":"+("00" + cut_duration_date.getMinutes()).slice(-2)+":"+("00" + cut_duration_date.getSeconds()).slice(-2)+"</b>";
-    var badge = document.querySelector("#reviewed-badge");
-    
-    badge.setAttribute("data-badge",segments_reviewed);
     
     $("#file-info").append(cur_duration_text + duration_text + "<br>segments removed: <b>"+segments_removed+"</b><br>segments excluded: <b>"+segments_excluded+"</b><br>segments reviewed: <b>"+segments_reviewed+"</b>"+" of "+scenes.length);
    }
@@ -586,7 +551,29 @@ function updateFileInfo() {
 
 $( document ).ready(function() {
     console.log( "ready!" );
-    document.querySelector('#video-loading').addEventListener('mdl-componentupgraded', function() {});
+    
+    vid.addEventListener('progress', function(evt) {
+      var total = vid.duration;
+      loaded = loaded + 8;
+      pbar = document.querySelector('.mdl-js-progress');
+      pbar.addEventListener('mdl-componentupgraded', function() {    
+      //document.querySelector('.mdl-js-progress').addEventListener('mdl-componentupgraded', function() {
+         this.MaterialProgress.setProgress(loaded);
+         this.MaterialProgress.setBuffer(container_width-loaded);
+      });
+      if (loaded !==8) {
+      	pbar.addEventListener('mdl-componentupgraded', function() {    
+          pbar.MaterialProgress.setProgress(loaded);        
+          pbar.MaterialProgress.setBuffer(100-loaded);
+        });  
+
+      }
+      if (!isNaN(total)) {
+        $("#video-loading").fadeOut();
+      }
+   });
+
+    //document.querySelector('#video-loading').addEventListener('mdl-componentupgraded', function() {});
 
 });
 
@@ -657,6 +644,7 @@ function clockUpdate() {
       
       if (time>=start_time && time<end_time) {
         if (!vid.paused) {
+
             if (e.segment==="remove") {
               var st = cur+1;
               // find next playable segment
@@ -667,6 +655,12 @@ function clockUpdate() {
                 }
               }
             }
+            
+            if (!scenes[cur].reviewed) {
+            	scenes[cur].reviewed=true;
+            	updateSegmentInfo();
+            }
+            scenes[cur].reviewed=true;
         }
         if (cur !== i) {                                  
           cur = i;

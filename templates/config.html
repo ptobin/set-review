@@ -5,9 +5,7 @@
 <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.indigo-pink.min.css">
 <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script> 
-<script src="https://apis.google.com/js/client.js?onload=googleApiClientReady"></script>
- 
- 
+<script src="https://apis.google.com/js/client.js"></script>
 <style>
 </style> 
 </head> 
@@ -24,7 +22,6 @@
         <a class="mdl-navigation__link" href=""></a>
         <a class="mdl-navigation__link" href=""></a>
         <a class="mdl-navigation__link" href=""></a>
- 
       </nav>
     </div>
   </header>
@@ -34,9 +31,7 @@
           <a class="mdl-navigation__link" href="../intro">SET Intro</a>    
           <a class="mdl-navigation__link" href="../detect">Detect Segments</a>
       <a class="mdl-navigation__link" href="">Edit Segment</a>
-      <a class="mdl-navigation__link" href="../deliver">Deliver to YouTube</a>
-
-  
+      <a class="mdl-navigation__link" href="../deliver">Deliver to YouTube</a>  
     </nav>
   </div> 
   
@@ -44,40 +39,32 @@
     <div class="mdl-cell mdl-cell--8-col">
     <button id="authorize-button" style="visibility: hidden">Authorize</button>
   	<input type="file" id="filePicker" style="display: none" />
- 
-
 		<form action="#">
 		  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 		    <input class="mdl-textfield__input" type="text" value="set-videos" id="cloud-bucket">
 		    <label class="mdl-textfield__label" for="sample3">Google Cloud Folder</label>
 		  </div>
-		</form>
-		
+		</form>		
 		<div id="table-container"></div>
- 
         <br>
         <button id="continue" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored mdl-color-text--white">Continue</button>
-  
   	</div>
-
   </div>
-  
  </main>
  <script>
-    var PROJECT = 'set-cloud';
-    var clientId = '385389552797-ejkip3mim82hcjnkddnnsvjcipel21a7.apps.googleusercontent.com';
-    var apiKey = 'AIzaSyC0MKe_l9ojojT2pN-MFeGiFpCLrL5dEwQ';
-    var scopes = 'https://www.googleapis.com/auth/devstorage.full_control';
-    var API_VERSION = 'v1';
-    //var BUCKET = 'google-content-delivery-disk-cnn';
-    var BUCKET = 'set-videos';
-    var object = "";
+/*eslint-env jquery */
+/*globals gapi */
+var PROJECT = "set-cloud";
+var clientId = '385389552797-ejkip3mim82hcjnkddnnsvjcipel21a7.apps.googleusercontent.com';
+var apiKey = 'AIzaSyC0MKe_l9ojojT2pN-MFeGiFpCLrL5dEwQ';
+var scopes = 'https://www.googleapis.com/auth/devstorage.full_control';
+var API_VERSION = 'v1';
+//var BUCKET = 'google-content-delivery-disk-cnn';
+var BUCKET = 'set-videos';
+var object = "";
 
 function listcloud(data) {
-	
-	gcd = data;
-    //gcd = jQuery.parseJSON( data );
-	//console.log(gcd.items.length);
+	var gcd = data;
 	var html = 	'<table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">';
 	html += '<thead><tr><th></th><th class="mdl-data-table__cell--non-numeric">Filename</th><th class="mdl-data-table__cell--non-numeric">status</th></tr></thead>';
     html += '<tbody>';
@@ -86,65 +73,40 @@ function listcloud(data) {
   	  var hasVisualScenes = false;
 	  var hasEdits = false;
  	  var isReviewed = false;
-     
-      //console.log(e.name);
-      if ((e.name.substring(e.name.lastIndexOf(".")+1) === "mp4") && (e.name.indexOf("_edited") === -1)) {
-         
-         var fname = e.name.substring(0,e.name.indexOf("."));
-                
+      if ((e.name.substring(e.name.lastIndexOf(".")+1) === "mp4") && (e.name.indexOf("_edited") === -1)) {         
+         var fname = e.name.substring(0,e.name.indexOf("."));             
          gcd.items.some(function(e1) {
-            //console.log(el);
             var e1name = e1.name.substring(0,e1.name.indexOf("_"));
-            
             if (e1.name.substring(e1.name.indexOf("_")) === "_visual_scenes.csv") {
-         		
-         		if (fname === e1name) {
+          		if (fname === e1name) {
          		  hasVisualScenes = true;
-           		  console.log(fname + ' has visual scenes')
-
                   return true;
                 }
-
-            }
-
+           }
          });
          gcd.items.some(function(e2) {
-
-           
            var e2name = e2.name.substring(0,e2.name.indexOf("_edited"));
-            //console.log(e2.name);
-            if (e2.name.indexOf("_edited") >= 0) {
-         		
+             if (e2.name.indexOf("_edited") >= 0) {
          		if (fname === e2name) {
          		  hasEdits = true;
-           		  console.log(fname + ' has edits');
-
                   return true;
                 }
+           }
+        });
 
-            }
-
-         });
-
-          var btnReviewState = 'disabled';
-          if (hasVisualScenes) {
-          	btnReviewState = '';
-          }
+        var btnReviewState = 'disabled';
+        if (hasVisualScenes) {
+          btnReviewState = '';
+        }
           
-          var btnProcessState = 'disabled';
+        var btnProcessState = 'disabled';
           if (isReviewed) {
           	btnProcessState = '';
           }
- 
-
- 
           html += '<tr><td><button onclick="reviewVideo(\'' + fname + '\')" id="review" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"' + btnReviewState + '>Review</button></td>';
-
           html += '<td class="mdl-data-table__cell--non-numeric">' + e.name + '</td>';
-       
-          stateMessage = "Missing scenes";
-          
-          if (hasVisualScenes) {
+          var stateMessage = "Missing scenes";
+           if (hasVisualScenes) {
           	stateMessage = "";
           }
           if (hasEdits) {
@@ -153,24 +115,16 @@ function listcloud(data) {
           html += '<td>'+ stateMessage + '</td></tr>';
          
       }
-
-
-
-
      });
      html += '</tbody></table>';
      
      $("#table-container").html(html);
-
-	
 }
 
-    function listObjects() {
-      var request = gapi.client.storage.objects.list({
-        'bucket': BUCKET
-      });
-      executeRequest(request, 'listObjects');
-    }
+function listObjects() {
+   var request = gapi.client.storage.objects.list({'bucket': BUCKET});
+   executeRequest(request, 'listObjects');
+}
  
 $( document ).ready(function() {
   //loadTable(); 
@@ -183,43 +137,23 @@ function loadTable() {
 
  } 
  
-          //<a href="/video/MM41916160001" target="_blank" id="continue2" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored mdl-color-text--white">Continue</a>
-var sel;
-var val;
 
-//loadTable();
 $( "#cloud-bucket" ).change(function() {
   loadTable();
 });
 
- $(document).on("click", ".mdl-checkbox__ripple-container.mdl-js-ripple-effect.mdl-ripple--center", function() {
- 	sel = $(this).parents().eq(2).children().eq(1).text();
-
- 	console.log(  sel );
-});
- $( "#continue" ).click(function() {
+$( "#continue" ).click(function() {
  	loadTable();
- /*	
- 	val = $( "input:checked" ).val();
- 	console.log(val);
- 	
- 	if (val === "on") {
- 	   window.location = "/video/"+ sel;
-    }
-*/
-
-
 });
 
 
 function reviewVideo(fname) {
 	window.location = "/video/"+fname;
-
 }
 
 
    
-    function executeRequest(request, apiRequestName) {
+function executeRequest(request, apiRequestName) {
       request.execute(function(resp) {
         console.log(resp);
         
@@ -229,25 +163,19 @@ function reviewVideo(fname) {
         	listcloud(resp);
         	
         	$("#test").html('<video id="set-video" width="100%" height="auto" ><source src=' + resp.items[3].mediaLink + ' type="video/mp4" preload></video>');        	
-        	
-        	
         }
        
       });
 
     }
 
-   /**
-     * Set required API keys and check authentication status.
-     */
+
     function handleClientLoad() {
       gapi.client.setApiKey(apiKey);
       window.setTimeout(checkAuth, 1);
 
     }
-    /**
-     * Authorize Google Cloud Storage API.
-     */
+
     function checkAuth() {
       gapi.auth.authorize({
         client_id: clientId,
@@ -255,9 +183,7 @@ function reviewVideo(fname) {
         immediate: true
       }, handleAuthResult);
     }
-    /**
-     * Handle authorization.
-     */
+
     function handleAuthResult(authResult) {
       var authorizeButton = document.getElementById('authorize-button');
       if (authResult && !authResult.error) {
@@ -281,17 +207,11 @@ function reviewVideo(fname) {
       }, handleAuthResult);
       return false;
     }
-    /**
-     * Load the Google Cloud Storage API.
-     */
+
     function initializeApi() {
-      gapi.client.load('storage', API_VERSION);
+      gapi.client.load("storage", API_VERSION);
     }
-    /**
-     * Driver for sample application.
-     */
-  
-  
+
   
     $(window)
       .bind('load', function() {
