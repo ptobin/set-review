@@ -11,13 +11,7 @@
 <style>
 
 
-.set-card-square {
-	height: 255px;
-}
 
-#file-container {
-	height: 310px;
-}
 
 .mdl-card__title {	
   color: #fff;
@@ -119,8 +113,11 @@
 }
 
 #yt-metadata {
-	font-size: 80%;
+	padding: 10px;
+	width: 310px;
 }
+
+
 
 </style> 
 </head> 
@@ -144,7 +141,7 @@
   <div class="mdl-layout__drawer">
     <span class="mdl-layout-title">SET</span>
     <nav class="mdl-navigation">
-      <a class="mdl-navigation__link" href="../intro">SET Intro1</a>    
+      <a class="mdl-navigation__link" href="../intro">SET Intro</a>    
       <a class="mdl-navigation__link" href="../detect">Detect Segments</a>
       <a class="mdl-navigation__link" href="">Edit Segment</a>
       <a class="mdl-navigation__link" href="../deliver">Deliver to YouTube</a>
@@ -153,7 +150,7 @@
   </div>
   <main class="mdl-layout__content">
     <div id="mdl-grid" class="mdl-grid">
-         	   <div id="video-loading" style="width:100%"class="mdl-progress mdl-js-progress"></div>
+       <div id="video-loading" style="width:100%"class="mdl-progress mdl-js-progress"></div>
 
       <div id="video-container" class="mdl-cell mdl-cell--8-col">
       	 <div class="mdl-shadow--2dp">
@@ -165,16 +162,14 @@
    	         <div id="timeBar"></div>
    	       </div>
         </div>
-  	    <div id="timeline"></div> 	   
-          
+  	    <div id="timeline"></div> 	             
         <canvas id="segment-status-bar"></canvas>
-
-    
       </div>
 
 
       <div class="mdl-cell mdl-cell--4-col">
-      
+
+
 	      <div class="set-card-square mdl-card mdl-shadow--2dp">
 	        <div class="mdl-card__title">
 				<div id="segment-title-text" class="mdl-card__title-text"></div>	
@@ -198,10 +193,10 @@
     	  <span id="rateOutput" aria-live="polite"></span>
           <div id="current-time"></div>
          </div>
-
-	    </div>
-	    <br>
-	    <div id="yt-metadata">
+    </div>
+    <br>
+      	    <div id="yt-metadata" class="mdl-shadow--2dp">
+      	          	
 	    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
            <input class="mdl-textfield__input" type="text" id="title">
            <label class="mdl-textfield__label" for="title">Title...</label>
@@ -211,8 +206,8 @@
            <label class="mdl-textfield__label" for="description">Description...</label>
         </div>
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-           <input class="mdl-textfield__input" type="text" id="tags">
-           <label class="mdl-textfield__label" for="tags">Tags...</label>
+           <input class="mdl-textfield__input" type="text" id="keywords">
+           <label class="mdl-textfield__label" for="keywords">Keywords...</label>
         </div>   
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
            <input class="mdl-textfield__input" type="text" value="WW" id="ownership">
@@ -221,11 +216,12 @@
          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
            <input class="mdl-textfield__input" type="text" value="Monetize in all countries" id="usage-policy">
            <label class="mdl-textfield__label" for="usage-policy">Usage Policy...</label>
+         </div>      
          </div>
-         <button class="mdl-button mdl-js-button mdl-button--raised" disabled>Publish to YouTube</button>
-         
-         </div>
-         
+	
+	    <br>
+        <button class="mdl-button mdl-js-button mdl-button--raised" disabled>Publish to YouTube</button>
+  
       </div>
 
    </div>
@@ -244,6 +240,7 @@ var cur = 0;
 var ratio;
 var loaded = 0;
 var nav_width = 0;
+var scenes_reviewed = 0;
 var container_width = document.getElementById("mdl-grid").offsetWidth;
  
 //var scenes_url= 'https://storage.cloud.google.com/set-videos/{{ name }}_visual_scenes.csv';
@@ -283,9 +280,7 @@ function drawSegmentStatus() {
   c.width = nav_width;
   c.height = 8;
   var ctx = c.getContext("2d");
-  //ctx.clearRect(0, 0, nav_width, 8);
-        //ctx.fillStyle = "#fff";
-  //ctx.fillRect(0, 0, nav_width, 8);
+
   scenes.forEach(function(e) {
     var start = e[0]/1000;
     var end = e[1]/1000;
@@ -495,10 +490,19 @@ function updateSegmentInfo() {
   var duration = new Date(0,0,0,0,0,(scenes[cur][1]- scenes[cur][0])/1000);
   var rgb = rgbToHex(scenes[cur][2], scenes[cur][3], scenes[cur][4]);  
   var duration_text = "duration: <b>"+("00" + duration.getHours()).slice(-2)+":"+("00" + duration.getMinutes()).slice(-2)+":"+("00" + duration.getSeconds()).slice(-2)+"</b>";
-  var start_end_text = "<br>start-end: <b>"+ ("00" + start_time.getHours()).slice(-2)+":"+("00" + start_time.getMinutes()).slice(-2)+":"+("00" + start_time.getSeconds()).slice(-2) + " - "+("00" + end_time.getHours()).slice(-2)+":"+("00" + end_time.getMinutes()).slice(-2)+":"+("00" +end_time.getSeconds()).slice(-2)+"</b>";
+  var start_end_text = "<br><br>start-end: <b>"+ ("00" + start_time.getHours()).slice(-2)+":"+("00" + start_time.getMinutes()).slice(-2)+":"+("00" + start_time.getSeconds()).slice(-2) + " - "+("00" + end_time.getHours()).slice(-2)+":"+("00" + end_time.getMinutes()).slice(-2)+":"+("00" +end_time.getSeconds()).slice(-2)+"</b>";
   
   $(".mdl-card__supporting-text").html(duration_text+start_end_text);
-  $(".mdl-card__supporting-text").append("<br>rgb score:<div style=\"padding:5px;display: inline;text-align:center;width:240px;color:white;background-color:"+rgb+"\">"+rgb+"</div>");  
+  $(".mdl-card__supporting-text").append("<br><br>rgb score: <b><div style=\"padding:5px;display: inline;text-align:center;width:240px;color:white;background-color:"+rgb+"\">"+rgb+"</b></div>");  
+  
+  scenes_reviewed = 0;
+  scenes.forEach(function(e) {
+  	if (e.reviewed) {
+  		scenes_reviewed += 1;
+  	}
+  });
+  
+  $(".mdl-card__supporting-text").append("<br><br>segments reviewed: <b>" + scenes_reviewed + " of " + scenes.length + "</b>");
 
   var badge = document.querySelector("#segment-badge"); 
   if (scenes[cur].reviewed) {  
@@ -601,39 +605,32 @@ setInterval(clockUpdate, 10);
 function clockUpdate() {
   var time = new Date(0,0,0,0,0,vid.currentTime);
   if (scenes.length !== 0) {
-  //if (typeof scenes !=="undefined") {
+    scenes_reviewed = 0;
     scenes.forEach(function(e,i) {
-    
-      time = new Date(0,0,0,0,0,vid.currentTime);
-      var start_time = new Date(0,0,0,0,0,e[0]/1000);
-      var end_time = new Date(0,0,0,0,0,e[1]/1000);
       
-      if (time>=start_time && time<end_time) {
+      var ctime = vid.currentTime;
+      var st = e[0]/1000;
+      var end = e[1]/1000;
+      
+      if (ctime >= st && ctime <end) {
+      //if (time>=start_time && time<end_time) {
         if (!vid.paused) {
-
-            if (e.segment==="remove") {
-              var st = cur+1;
-              // find next playable segment
-              for (var j=st; j<scenes.length; ++j) {
-                if (scenes[j].segment !== "remove") {
-                vid.currentTime = scenes[j][0]/1000;
-                break;
-                }
-              }
-            }
-            
+          
             if (!scenes[cur].reviewed) {
             	scenes[cur].reviewed=true;
+
             	updateSegmentInfo();
             }
             scenes[cur].reviewed=true;
         }
         if (cur !== i) {                                  
           cur = i;
+          
           updateSegmentInfo();
         }
        }
     });
+
   }
 
   //show clock
