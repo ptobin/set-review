@@ -29,7 +29,7 @@ def intro():
 def config():
   return render_template("config.html")
 
-@app.route('/demo')
+@app.route('/upload')
 def demo():
   return render_template("main.html")
 
